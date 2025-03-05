@@ -1,7 +1,8 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 import prisma from '../prisma/client';
-
+import {env} from './env'
+ 
 interface JwtPayload {
   id: string;
   email: string;
@@ -10,7 +11,7 @@ interface JwtPayload {
 
 const opts: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET || 'secret_key',
+  secretOrKey: env.JWT_SECRET || 'secret_key',
 };
 
 passport.use(

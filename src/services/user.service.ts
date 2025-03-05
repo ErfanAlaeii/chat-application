@@ -2,7 +2,7 @@ import { Role } from '@prisma/client';
 import prisma  from '../prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
+import { env } from '../config/env';
 
 export async function createUser(data: { email: string; password: string; name?: string; role?: Role}) {
 
@@ -44,7 +44,7 @@ export async function loginUser(data: { email: string; password: string }) {
 
   const token = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
-    process.env.JWT_SECRET || 'secret_key',
+    env.JWT_SECRET || 'secret_key',
     { expiresIn: '1h' }
   );
   return token;
