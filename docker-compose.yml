@@ -1,4 +1,4 @@
-
+version: "3.8"
 
 services:
   backend:
@@ -13,13 +13,15 @@ services:
       - JWT_SECRET=secret_key
       - GOOGLE_CLIENT_ID=google_client_id
       - GOOGLE_CLIENT_SECRET=google_client_secret
+      - NODE_ENV=development
     networks:
       - chat-backend-network
     volumes:
-      - .:/app  
-      - /app/node_modules 
-    working_dir: /app 
-    command: ["npm", "run", "dev"]  
+      - .:/app:cached   
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    command: ["npm", "run", "dev"]
 
   db:
     image: mysql:8
@@ -28,7 +30,7 @@ services:
       MYSQL_DATABASE: chat_app
       MYSQL_USER: mysql
       MYSQL_PASSWORD: 123456
-      MYSQL_ROOT_PASSWORD: rootpassword123  
+      MYSQL_ROOT_PASSWORD: rootpassword123
     ports:
       - "3306:3306"
     volumes:
