@@ -8,6 +8,7 @@ import {
   deleteConversationServices
 } from '../services/conversation.Service';
 import { createConversationSchema } from '../validations/conversation.validation';
+import logger from '../utils/logger';
 
 export async function createConversation(req: Request, res: Response) {
   const validateData = createConversationSchema.safeParse(req.body)
@@ -28,6 +29,7 @@ export async function createConversation(req: Request, res: Response) {
     );
     res.status(201).json(conversation);
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -41,6 +43,7 @@ export async function getConversations(req: Request, res: Response) {
     const conversations = await getConversationsByUser(userId);
     res.json(conversations);
   } catch (error) {
+    logger.error({error})
     res.status(500).json({ message: (error as Error).message });
   }
 }
@@ -60,6 +63,7 @@ export async function getConversationById(req: Request, res: Response) {
 
     res.json(conversation);
   } catch (error) {
+    logger.error({error})
     res.status(500).json({ message: (error as Error).message });
   }
 }
@@ -75,6 +79,7 @@ export async function addUserToConversation(req: Request, res: Response) {
 
     res.status(200).json({ message: "User added to conversation", updatedConversation });
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -91,6 +96,7 @@ export async function removeUserFromConversation(req: Request, res: Response) {
 
     res.status(200).json({ message: "User removed from conversation", updatedConversation });
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -107,6 +113,7 @@ export async function deleteConversation(req: Request, res: Response) {
 
     res.status(200).json({ message: "Conversation deleted successfully" });
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }

@@ -12,6 +12,7 @@ import {
   messageIdParamSchema,
   conversationIdParamSchema
 } from "../validations/message.validation";
+import logger from "../utils/logger";
 
 export async function sendMessageController(req: Request, res: Response) {
   const validation = sendMessageSchema.safeParse(req.body)
@@ -27,6 +28,7 @@ export async function sendMessageController(req: Request, res: Response) {
     const message = await sendMessage(conversationId, senderId, content, fileUrl);
     res.status(201).json(message);
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -42,6 +44,7 @@ export async function getMessagesController(req: Request, res: Response) {
     const messages = await getMessagesByConversation(conversationId);
     res.status(200).json(messages);
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -64,6 +67,7 @@ export async function editMessageController(req: Request, res: Response) {
     }
     res.status(200).json({ message: "Message updated successfully" });
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -86,6 +90,7 @@ export async function deleteMessageController(req: Request, res: Response) {
     }
     res.status(200).json({ message: "Message deleted successfully" });
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -101,6 +106,7 @@ export async function markMessageAsReadController(req: Request, res: Response) {
     const updatedMessage = await markMessageAsRead(messageId, userId);
     res.status(200).json(updatedMessage);
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }

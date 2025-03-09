@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { createPostService,getPostsService, getUserPostsService, publishPostService } from '../services/post.Service';
 import { createPostSchema } from '../validations/post.validation';
+import logger from '../utils/logger';
 
 export async function createPost(req: Request, res: Response) {
   const validatedData = createPostSchema.safeParse(req.body)
@@ -15,6 +16,7 @@ export async function createPost(req: Request, res: Response) {
     const post = await createPostService(validatedData.data, authorId);
     res.status(201).json(post);
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -44,6 +46,7 @@ export async function publishPost(req: Request, res: Response) {
         return res.status(403).json({ message: error.message });
       }
     }
+    logger.error({error})
     res.status(500).json({ message: "An unexpected error occurred" });
   }
 }
@@ -55,6 +58,7 @@ export async function getPosts(req: Request, res: Response) {
     const posts = await getPostsService();
     res.json(posts);
   } catch (error) {
+    logger.error({error})
     res.status(500).json({ message: (error as Error).message });
   }
 }
@@ -69,6 +73,7 @@ export async function getUserPosts(req: Request, res: Response) {
     const posts = await getUserPostsService(authorId);
     res.status(200).json(posts);
   } catch (error) {
+    logger.error({error})
     res.status(400).json({ message: (error as Error).message });
   }
 }
