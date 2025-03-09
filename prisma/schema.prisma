@@ -3,7 +3,6 @@ generator client {
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -15,14 +14,17 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String?
-  role      Role     @default(USER)
-  googleId  String?
-  createdAt DateTime @default(now())
-  posts     Post[]
+  id                       String                    @id @default(uuid())
+  email                    String                    @unique
+  name                     String?
+  password                 String?
+  role                     Role                      @default(USER)
+  googleId                 String?
+  createdAt                DateTime                  @default(now())
+  posts                    Post[]
+  readMessages             Message[]                 @relation("MessagesRead")
+  conversationParticipants ConversationParticipant[]
+  messages                 Message[]
 }
 
 model Post {
@@ -35,4 +37,35 @@ model Post {
   author    User     @relation(fields: [authorId], references: [id])
 
   @@index([authorId], map: "Post_authorId_fkey")
+}
+
+model Conversation {
+  id           String                    @id @default(uuid())
+  isGroup      Boolean                   @default(false)
+  name         String?
+  createdAt    DateTime                  @default(now())
+  participants ConversationParticipant[]
+  messages     Message[]
+}
+
+model ConversationParticipant {
+  conversationId String
+  userId         String
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@id([conversationId, userId])
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  senderId       String
+  content        String?
+  createdAt      DateTime     @default(now())
+  fileUrl        String?
+  readBy         User[]       @relation("MessagesRead")
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  sender         User         @relation(fields: [senderId], references: [id])
 }
